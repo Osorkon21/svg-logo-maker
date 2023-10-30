@@ -1,7 +1,7 @@
 // import inquirer, node filesystem, and shapes.js 
 const inquirer = require("inquirer");
 const fs = require("fs");
-// const shapes = require("./lib/shapes.js");
+const shapes = require("./lib/shapes");
 
 // questions for the command-line prompts
 const questions = [
@@ -47,19 +47,23 @@ function writeSVG(contents) {
   fs.writeFile("./output/logo.svg", contents, (err) => err ? console.error(err) : console.log("Generated logo.svg!"));
 }
 
+function genSVG(response) {
+  if (response.shape === 0) {
+    const circle = new shapes.Circle();
+    return circle.genSVG(response);
+  }
+  else if (response.shape === 1)
+    return shapes.Triangle.genSVG(response);
+  else
+    return shapes.Square.genSVG(response);
+}
+
 // prompts the user for input, generates SVG based on that input, and writes SVG to a new logo.svg file in the output folder
 async function init() {
   const response = await inquirer.prompt(questions);
-  const contents = "blah blah";
+  const content = genSVG(response);
 
-  // if (response.shape === 0)
-  //   contents = shapes.Circle.genSVG(response);
-  // else if (response.shape === 1)
-  //   contents = shapes.Triangle.genSVG(response);
-  // else
-  //   contents = shapes.Square.genSVG(response);
-
-  writeSVG(contents);
+  writeSVG(content);
 }
 
 // function called when index.js is run
