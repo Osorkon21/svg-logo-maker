@@ -1,7 +1,7 @@
 // import inquirer, node filesystem, and shapes.js 
 const inquirer = require("inquirer");
 const fs = require("fs");
-const shapes = require("./lib/shapes");
+const { Circle, Triangle, Square } = require("./lib/shapes");
 
 // questions for the command-line prompts
 const questions = [
@@ -9,6 +9,8 @@ const questions = [
     type: "input",
     message: "Enter your logo's text. You may use up to three characters.",
     name: "logoText",
+
+    // ensures user does not enter more than three characters
     validate: (input) => input.length <= 3 ? true : "Three characters max - try again."
   },
   {
@@ -47,15 +49,20 @@ function writeSVG(contents) {
   fs.writeFile("./output/logo.svg", contents, (err) => err ? console.error(err) : console.log("Generated logo.svg!"));
 }
 
+// generates SVG based on what shape the user chooses
 function genSVG(response) {
   if (response.shape === 0) {
-    const circle = new shapes.Circle();
-    return circle.genSVG(response);
+    const circle = new Circle(response.logoText, response.textColor, response.shapeColor);
+    return circle.render();
   }
-  else if (response.shape === 1)
-    return shapes.Triangle.genSVG(response);
-  else
-    return shapes.Square.genSVG(response);
+  else if (response.shape === 1) {
+    const triangle = new Triangle(response.logoText, response.textColor, response.shapeColor);
+    return triangle.render();
+  }
+  else {
+    const square = new Square(response.logoText, response.textColor, response.shapeColor);
+    return square.render();
+  }
 }
 
 // prompts the user for input, generates SVG based on that input, and writes SVG to a new logo.svg file in the output folder
